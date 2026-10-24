@@ -15,6 +15,7 @@ Each guide walks through installation, configuration, and first run — so you c
 
 | Tool            | Description                                                                                                 | Guide                          |
 | --------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| **Achbit** | Local-first coding agent with GUI/TUI/CLI, Computer Use, and a shared session loop for project tools and visual verification. | [Guide](./docs/achbit.md) |
 | **AstrBot** | Open-source agent assistant for Feishu, Telegram and more, extensible with skills, plugins, and MCPs. | [Guide](./docs/astrbot.md) |
 | **Cherry Studio** | Open-source cross-platform desktop AI client with 300+ assistants, MCP support, knowledge bases, and multi-model chat. | [Guide](./docs/cherry_studio.md) |
 | **Claude Code** | AI coding assistant that runs in the terminal.                                                              | [Guide](./docs/claude_code.md) |
