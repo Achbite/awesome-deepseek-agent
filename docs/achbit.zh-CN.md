@@ -2,13 +2,13 @@
 
 # 在 Achbit 中使用 DeepSeek
 
-[Achbit](https://github.com/Achbite/Achbit) 是采用 MIT 许可证的本地优先编程 Agent，提供桌面 GUI、TUI 和 CLI。项目前名为 DeepCode，产品和 GitHub 仓库现已统一改名为 Achbit。本指南使用 **Achbit 0.6.60**，通过 **Responses API** 接入 **DeepSeek Flash**。
+[Achbit](https://github.com/Achbite/Achbit) 是采用 MIT 许可证的本地优先编程 Agent，提供桌面 GUI、TUI 和 CLI。本指南使用 **Achbit 0.6.60**，通过 **Responses API** 接入 **DeepSeek Flash**。
 
 Achbit 在同一个会话中连接项目编辑、命令执行、浏览器交互和可视结果检查。GUI、TUI、CLI 共享模型连接与 Session 状态。Computer Use 提供内置浏览器、可选的 Chrome DevTools MCP 接入，以及经授权的 macOS 和 Windows 原生桌面操作。
 
 ## 1. 安装并打开 Achbit
 
-从 [Achbit 0.6.60](https://github.com/Achbite/Achbit/releases/tag/0.6.60) 下载对应制品，先阅读发布页的平台说明与验证范围。
+从 [Achbit 0.6.60](https://github.com/Achbite/Achbit/releases/tag/0.6.60) 下载对应平台的制品。
 
 | 平台 | 安装包或解压包 | GUI 入口 |
 | --- | --- | --- |
@@ -53,11 +53,9 @@ Windows、Linux 跳过签名命令。进入开发容器后执行 `bash ./build.s
 | 图片输入 | 启用 |
 | 联网搜索 | 关闭 |
 
-使用 [DeepSeek 当前模型文档](https://api-docs.deepseek.com/quick_start/pricing/) 中的 `deepseek-flash`，目前对应 V4.1 Flash-1017。较早的示例可能使用 `deepseek-v4-flash`，本指南遵循当前官方名称。
+API 模型名使用 `deepseek-flash`。当前能力和价格见 [DeepSeek 模型文档](https://api-docs.deepseek.com/quick_start/pricing/)。
 
 DeepSeek 支持 1M 上下文和最多 384K 输出 token。最大输出是预算上限，不是要求生成这么长的回答。已有会话的推理强度可能覆盖模型配置，此时也需在会话中选择 `max`。截图任务需要开启图片输入。模型编辑器的“联网搜索”开关控制供应商托管的 Responses 工具，Flash 会忽略它；Achbit 自身搜索工具的可用性单独管理。参见 [Responses API](https://api-docs.deepseek.com/guides/responses_api/) 和[思考模式](https://api-docs.deepseek.com/guides/thinking_mode/)。
-
-模型编辑器的测试操作会消耗 API 额度，只能证明该次探测请求成功；接着运行真实工具任务。
 
 ## 3. 运行首个任务并继续会话
 
@@ -100,14 +98,14 @@ achbit-tui -C /path/to/project
 - **根据实际执行结果继续。** Kernel 执行工具并记录结果；文件调用在依赖关系允许时有限并行；长命令保留运行中状态，依赖它的步骤等待真实完成。等待、取消、错误和未知结果保持可区分。
 - **观察与输入有明确身份。** 原生动作绑定实际应用、窗口和当前 run 的观察。观察默认后台，鼠标键盘输入要求显式前台观察。已派发的动作即使后续截图失败，也保留已派发事实，避免把截图失败当成可以重放输入的依据。
 
-这些是架构性质，不是经过测量的速度、费用或可靠性比较。可查看 [Session loop](https://github.com/Achbite/Achbit/blob/0.6.60/userspace/session-core/src/local-agent/loop.ts)、[工具目录](https://github.com/Achbite/Achbit/blob/0.6.60/crates/achbit-kernel-daemon/src/local_agent_tool_catalog.rs)和 [Computer Use 文档](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/computer-use/README.md)。
+实现参考：[Session loop](https://github.com/Achbite/Achbit/blob/0.6.60/userspace/session-core/src/local-agent/loop.ts)、[工具目录](https://github.com/Achbite/Achbit/blob/0.6.60/crates/achbit-kernel-daemon/src/local_agent_tool_catalog.rs)和 [Computer Use 文档](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/computer-use/README.md)。
 
 内置浏览器依赖发起它的 GUI 窗口。原生桌面工具由共享 Host 提供，可在平台支持并获授权时供 CLI/TUI/GUI 使用。macOS 原生桌面控制要求 macOS 15.2+、辅助功能和屏幕录制权限；Windows 普通权限会话不能控制提权应用。Linux 支持内置浏览器的不依赖截图的页面操作，不支持原生桌面控制或浏览器截图工具。[Chrome 接入](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/chrome-devtools/README.md)使用浏览器自身的确认流程。激活插件不等于取得执行或系统权限。
 
 ## 参考资料
 
 - [Achbit DeepSeek 配置指南](https://github.com/Achbite/Achbit/blob/0.6.60/docs/product/deepseek.zh-CN.md)
-- [真实示例与证据范围](https://github.com/Achbite/Achbit/tree/0.6.60/examples/deepseek-browser-checklist)
+- [Computer Use 示例项目](https://github.com/Achbite/Achbit/tree/0.6.60/examples/launch-checklist)
 - [DeepSeek Responses API](https://api-docs.deepseek.com/guides/responses_api/)
 - [DeepSeek 思考模式](https://api-docs.deepseek.com/guides/thinking_mode/)
 - [当前模型与价格](https://api-docs.deepseek.com/quick_start/pricing/)

@@ -2,13 +2,13 @@
 
 # Use DeepSeek with Achbit
 
-[Achbit](https://github.com/Achbite/Achbit) is an MIT-licensed, local-first coding agent with a desktop GUI, TUI, and CLI. It was previously named DeepCode; the project and GitHub repository have now been renamed. This guide uses **Achbit 0.6.60** and **DeepSeek Flash** through the **Responses API**.
+[Achbit](https://github.com/Achbite/Achbit) is an MIT-licensed, local-first coding agent with a desktop GUI, TUI, and CLI. This guide uses **Achbit 0.6.60** and **DeepSeek Flash** through the **Responses API**.
 
 Achbit connects project editing, command execution, browser interaction, and visual inspection in the same conversation. Its GUI, TUI, and CLI share model connections and Session state. Computer Use adds an embedded browser, an optional Chrome DevTools MCP connection, and authorized native desktop interaction on macOS and Windows.
 
 ## 1. Install and open Achbit
 
-Download an asset from [Achbit 0.6.60](https://github.com/Achbite/Achbit/releases/tag/0.6.60). Read its platform and verification notes before selecting a package.
+Download a package for your platform from [Achbit 0.6.60](https://github.com/Achbite/Achbit/releases/tag/0.6.60).
 
 | Platform | Installer or archive | GUI entry |
 | --- | --- | --- |
@@ -53,11 +53,9 @@ Get an API key from the [DeepSeek Platform](https://platform.deepseek.com/).
 | Image input | Enabled |
 | Web search | Off |
 
-Use `deepseek-flash`, the current name in [DeepSeek's model documentation](https://api-docs.deepseek.com/quick_start/pricing/). It currently serves V4.1 Flash-1017. Older examples may use `deepseek-v4-flash`; follow the current official name above.
+Use `deepseek-flash` as the API model name. See [DeepSeek's model documentation](https://api-docs.deepseek.com/quick_start/pricing/) for current capabilities and pricing.
 
 DeepSeek documents a 1M context window and up to 384K output tokens. The output setting is a maximum budget, not a requested answer length. Select `max` in the conversation too if an earlier conversation effort overrides the saved model profile. Image input is needed for screenshot-based work. The model editor's Web search switch controls the provider-hosted Responses tool, which Flash ignores; Achbit's own search tools have separate availability. See [Responses API](https://api-docs.deepseek.com/guides/responses_api/) and [Thinking Mode](https://api-docs.deepseek.com/guides/thinking_mode/).
-
-The model editor's Test action consumes API quota and confirms only that probe. Continue with an actual tool task.
 
 ## 3. Run a first task and continue the conversation
 
@@ -100,7 +98,7 @@ Replace the command with the portable launcher when needed. Copy `<profile-id>` 
 - **Execution facts drive continuation.** The Kernel executes tools and records results. File calls use bounded parallel execution where their dependency information permits it. Long commands retain their running state; dependent steps wait for actual completion. Waiting, cancellation, errors, and unknown outcomes remain distinguishable.
 - **Observation and input are explicit.** Native actions use observations tied to the actual app/window/run. Observation defaults to background; mouse and keyboard input require explicit foreground observation. A dispatched action followed by an observation failure remains a dispatched action, preventing a screenshot failure from being mistaken for permission to repeat the input.
 
-These are architectural properties, not a measured speed, cost, or reliability comparison. See the [Session loop](https://github.com/Achbite/Achbit/blob/0.6.60/userspace/session-core/src/local-agent/loop.ts), [tool catalog](https://github.com/Achbite/Achbit/blob/0.6.60/crates/achbit-kernel-daemon/src/local_agent_tool_catalog.rs), and [Computer Use documentation](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/computer-use/README.md).
+Implementation: [Session loop](https://github.com/Achbite/Achbit/blob/0.6.60/userspace/session-core/src/local-agent/loop.ts), [tool catalog](https://github.com/Achbite/Achbit/blob/0.6.60/crates/achbit-kernel-daemon/src/local_agent_tool_catalog.rs), and [Computer Use documentation](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/computer-use/README.md).
 
 The embedded browser requires an originating GUI window. Native desktop tools use the shared Host and are available to CLI/TUI/GUI when supported and permitted. macOS native desktop control requires macOS 15.2+, Accessibility, and Screen Recording; Windows rejects elevated app windows from a normal session. Linux supports the embedded browser's non-screenshot page operations, but not native desktop control or browser screenshot tools. [Chrome integration](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/chrome-devtools/README.md) has its own browser consent flow. Plugin activation does not grant execution or OS permissions.
 
