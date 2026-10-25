@@ -69,7 +69,7 @@ Then, in the same conversation:
 
 Review any access requests and inspect the actual tool results. Then try the [Launch checklist Computer Use project](https://github.com/Achbite/Achbit/tree/0.6.60/examples/launch-checklist): open its folder as a project and use the supplied prompt. The agent opens the local HTML, checks two tasks, verifies **2 / 4 and 50%**, filters completed items, and reloads to check persistence. The example needs no server or dependencies.
 
-![Achbit running an English DeepSeek Computer Use task](assets/achbit-computer-use.png)
+![Achbit running an English DeepSeek Computer Use task](assets/achbit-computer-use.jpg)
 
 The project includes a [run summary](https://github.com/Achbite/Achbit/blob/0.6.60/examples/launch-checklist/run-summary.json) and browser capture. For a task that also researches a public page and creates a deliverable, see the [browser research example](https://github.com/Achbite/Achbit/tree/0.6.60/examples/deepseek-browser-checklist).
 
@@ -91,14 +91,19 @@ achbit-tui -C /path/to/project
 
 Replace the command with the portable launcher when needed. Copy `<profile-id>` from `connections`: it identifies the saved configuration, not the API model name. In TUI use `/model` to select it, `/sessions` and `/resume` to continue a conversation, and `/language en-US` or `/language zh-CN` for interface language.
 
-## How Computer Use and the agent loop fit together
+## What the Computer Use and loop design adds
 
-- **One conversation across work surfaces.** Session owns model turns, context, waiting, cancellation, and the durable conversation journal. GUI, TUI, and CLI consume its shared projection, so a tool result remains part of the same task when the user changes interface.
-- **Tools added when needed.** Core file, command, and web tools are complemented by discoverable plugins. Activation contributes the selected tools and their guidance to the current run; CLI, MCP, and Computer Use use the existing execution and permission path. Tools are chosen for the operation: programmatic work can use CLI/MCP, with GUI interaction for interface behavior and visual checks.
-- **Execution facts drive continuation.** The Kernel executes tools and records results. File calls use bounded parallel execution where their dependency information permits it. Long commands retain their running state; dependent steps wait for actual completion. Waiting, cancellation, errors, and unknown outcomes remain distinguishable.
-- **Observation and input are explicit.** Native actions use observations tied to the actual app/window/run. Observation defaults to background; mouse and keyboard input require explicit foreground observation. A dispatched action followed by an observation failure remains a dispatched action, preventing a screenshot failure from being mistaken for permission to repeat the input.
+Achbit exposes Computer Use through locally executed tools. Observations, images and execution results return to DeepSeek through the same Session loop as project tools.
 
-Implementation: [Session loop](https://github.com/Achbite/Achbit/blob/0.6.60/userspace/session-core/src/local-agent/loop.ts), [tool catalog](https://github.com/Achbite/Achbit/blob/0.6.60/crates/achbit-kernel-daemon/src/local_agent_tool_catalog.rs), and [Computer Use documentation](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/computer-use/README.md).
+| Design | Practical benefit |
+| --- | --- |
+| **Code and interface work in one task.** Use file tools, commands or MCP for programmatic operations, then the embedded browser or native desktop tools for interaction and inspection. | Check rendered behavior after a code change while keeping the implementation, tool results and visual evidence in the same conversation. |
+| **One Session engine across GUI, TUI and CLI.** Session owns model turns, context, waiting, cancellation and the durable journal; each interface consumes the same projection. | Continue the task through another interface with its existing history and execution state. |
+| **Tools loaded for the current run.** Discover and activate plugins when needed; activation adds the selected tool schemas and guidance to the run. | Extend a small core toolset for the task without introducing a separate agent loop or loading every plugin into each request. |
+| **Scheduling follows execution facts.** The Kernel supplies file-call dependencies; the loop runs eligible calls with bounded concurrency and waits for dependent long-running commands. | Use concurrency where operations permit it, while keeping started, waiting, completed, failed, cancelled and unknown outcomes distinct. |
+| **Native input is tied to an observed target.** Observations bind to the app, window and run. Background observation and foreground mouse/keyboard input have distinct requirements. | Reject stale target observations and preserve the action's dispatch result if a later screenshot fails, so that failure does not authorize repeating the input. |
+
+Implementation: [Session loop](https://github.com/Achbite/Achbit/blob/0.6.60/userspace/session-core/src/local-agent/loop.ts), [tool catalog](https://github.com/Achbite/Achbit/blob/0.6.60/crates/achbit-kernel-daemon/src/local_agent_tool_catalog.rs), and [Computer Use documentation](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/computer-use/README.md). The recorded checklist run demonstrates the embedded browser on macOS; it does not exercise external native apps or Windows.
 
 The embedded browser requires an originating GUI window. Native desktop tools use the shared Host and are available to CLI/TUI/GUI when supported and permitted. macOS native desktop control requires macOS 15.2+, Accessibility, and Screen Recording; Windows rejects elevated app windows from a normal session. Linux supports the embedded browser's non-screenshot page operations, but not native desktop control or browser screenshot tools. [Chrome integration](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/chrome-devtools/README.md) has its own browser consent flow. Plugin activation does not grant execution or OS permissions.
 

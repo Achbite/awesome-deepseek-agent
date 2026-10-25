@@ -69,7 +69,7 @@ DeepSeek 支持 1M 上下文和最多 384K 输出 token。最大输出是预算�
 
 确认必要的访问请求，检查实际工具结果。接下来体验[发布清单 Computer Use 项目](https://github.com/Achbite/Achbit/tree/0.6.60/examples/launch-checklist)：将该目录打开为项目，使用提供的提示词。Agent 会打开本地 HTML、勾选两项任务、确认 **2 / 4 和 50%**，筛选已完成项目，再重载检查状态保持。无需启动服务器或安装依赖。
 
-![Achbit 中的 DeepSeek Computer Use 任务](assets/achbit-computer-use.png)
+![Achbit 中的 DeepSeek Computer Use 任务](assets/achbit-computer-use.jpg)
 
 项目附带[运行摘要](https://github.com/Achbite/Achbit/blob/0.6.60/examples/launch-checklist/run-summary.json)和浏览器截图。要体验查阅公开网页并生成作品，可继续尝试[浏览器调研示例](https://github.com/Achbite/Achbit/tree/0.6.60/examples/deepseek-browser-checklist)。
 
@@ -91,14 +91,19 @@ achbit-tui -C /path/to/project
 
 解压版按需替换为表中的入口。`<profile-id>` 从 `connections` 输出中复制，它是已保存配置的 ID，不是 API 模型名。TUI 中使用 `/model` 选择模型，`/sessions`、`/resume` 继续已有会话，`/language en-US` 或 `/language zh-CN` 切换界面语言。
 
-## Computer Use 与 Agent Loop 如何协作
+## Computer Use 与 Loop 设计带来的能力
 
-- **多个操作入口，共享同一会话。** Session 负责模型轮次、上下文、等待、取消和持久化会话日志；GUI、TUI、CLI 消费共享投影，切换界面后工具结果仍属于同一个任务。
-- **按需加入工具。** 核心文件、命令、网络工具通过可发现插件扩展；激活后把选中的工具及其指导加入本轮执行。CLI、MCP、Computer Use 复用现有执行与权限链路。任务按操作选择接口：程序化工作使用 CLI/MCP，界面行为与视觉检查使用 GUI。
-- **根据实际执行结果继续。** Kernel 执行工具并记录结果；文件调用在依赖关系允许时有限并行；长命令保留运行中状态，依赖它的步骤等待真实完成。等待、取消、错误和未知结果保持可区分。
-- **观察与输入有明确身份。** 原生动作绑定实际应用、窗口和当前 run 的观察。观察默认后台，鼠标键盘输入要求显式前台观察。已派发的动作即使后续截图失败，也保留已派发事实，避免把截图失败当成可以重放输入的依据。
+Achbit 通过本地执行的工具提供 Computer Use。观察、图片和执行结果与项目工具结果进入同一个 Session Loop，再返回 DeepSeek。
 
-实现参考：[Session loop](https://github.com/Achbite/Achbit/blob/0.6.60/userspace/session-core/src/local-agent/loop.ts)、[工具目录](https://github.com/Achbite/Achbit/blob/0.6.60/crates/achbit-kernel-daemon/src/local_agent_tool_catalog.rs)和 [Computer Use 文档](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/computer-use/README.md)。
+| 设计 | 实际价值 |
+| --- | --- |
+| **代码与界面操作在同一任务中衔接。** 程序化操作使用文件工具、命令或 MCP，交互与检查使用内置浏览器或原生桌面工具。 | 修改代码后检查实际界面行为，实现、工具结果和视觉证据保留在同一会话。 |
+| **GUI、TUI、CLI 共用一个 Session 引擎。** Session 负责模型轮次、上下文、等待、取消和持久化日志，各界面消费同一投影。 | 切换入口后，可以沿用已有历史和执行状态继续任务。 |
+| **按当前运行加载工具。** 按需发现、激活插件，将选中的工具 schema 与指导加入本轮。 | 为任务扩展精简核心工具集，无需另建 Agent Loop，也无需每次请求加载全部插件。 |
+| **按执行事实调度。** Kernel 提供文件调用依赖，Loop 对符合条件的调用有限并行，并等待后续步骤所依赖的长命令。 | 在操作允许时并行，同时明确区分已启动、等待、完成、失败、取消与未知结果。 |
+| **原生输入绑定已观察的目标。** 观察绑定应用、窗口和当前 run；后台观察与前台鼠标键盘输入有不同要求。 | 拒绝过期目标观察；动作派发后即使截图失败，也保留派发结果，不能据此重复输入。 |
+
+实现参考：[Session loop](https://github.com/Achbite/Achbit/blob/0.6.60/userspace/session-core/src/local-agent/loop.ts)、[工具目录](https://github.com/Achbite/Achbit/blob/0.6.60/crates/achbit-kernel-daemon/src/local_agent_tool_catalog.rs)和 [Computer Use 文档](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/computer-use/README.md)。清单示例的运行记录覆盖 macOS 内置浏览器，没有覆盖外部原生应用或 Windows。
 
 内置浏览器依赖发起它的 GUI 窗口。原生桌面工具由共享 Host 提供，可在平台支持并获授权时供 CLI/TUI/GUI 使用。macOS 原生桌面控制要求 macOS 15.2+、辅助功能和屏幕录制权限；Windows 普通权限会话不能控制提权应用。Linux 支持内置浏览器的不依赖截图的页面操作，不支持原生桌面控制或浏览器截图工具。[Chrome 接入](https://github.com/Achbite/Achbit/blob/0.6.60/plugins/chrome-devtools/README.md)使用浏览器自身的确认流程。激活插件不等于取得执行或系统权限。
 
