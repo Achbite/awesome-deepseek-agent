@@ -2,19 +2,19 @@
 
 # Use DeepSeek with Achbit
 
-[Achbit](https://github.com/Achbite/Achbit) is an MIT-licensed, local-first coding agent with a desktop GUI, TUI, and CLI. This guide uses **Achbit 0.6.60** and **DeepSeek Flash** through the **Responses API**.
+[Achbit](https://github.com/Achbite/Achbit) is an MIT-licensed, local-first coding agent with a desktop GUI, TUI, and CLI. This guide connects **DeepSeek Flash** through the **Responses API**.
 
 Achbit connects project editing, command execution, browser interaction, and visual inspection in the same conversation. Its GUI, TUI, and CLI share model connections and Session state. Computer Use adds an embedded browser, an optional Chrome DevTools MCP connection, and authorized native desktop interaction on macOS and Windows.
 
 ## 1. Install and open Achbit
 
-Download a package for your platform from [Achbit 0.6.60](https://github.com/Achbite/Achbit/releases/tag/0.6.60).
+Download a package for your platform from [Releases](https://github.com/Achbite/Achbit/releases).
 
 | Platform | Installer or archive | GUI entry |
 | --- | --- | --- |
-| macOS Apple Silicon | `Achbit-0.6.60-macos-arm64.pkg` or `Achbit-0.6.60-macos-arm64.tar.gz` | `/Applications/Achbit.app`, or `Achbit.app` in the portable directory |
-| Windows x64 | `Achbit-0.6.60-win64-setup.exe` or `Achbit-0.6.60-win64.zip` | Start menu, or portable `Achbit.exe` |
-| Linux ARM64 | `Achbit-0.6.60-linux-arm64.tar.gz` | `./Achbit` in the extracted directory |
+| macOS Apple Silicon | `Achbit-<version>-macos-arm64.pkg` or `Achbit-<version>-macos-arm64.tar.gz` | `/Applications/Achbit.app`, or `Achbit.app` in the portable directory |
+| Windows x64 | `Achbit-<version>-win64-setup.exe` or `Achbit-<version>-win64.zip` | Start menu, or portable `Achbit.exe` |
+| Linux ARM64 | `Achbit-<version>-linux-arm64.tar.gz` | `./Achbit` in the extracted directory |
 
 Packages include their runtime. Windows portable GUI requires WebView2; Linux GUI requires GTK, WebKitGTK, and ALSA. macOS packages use the project's local development signing identity and are not Apple-notarized. See [installation and user directories](https://github.com/Achbite/Achbit/blob/0.6.60/docs/distribution.md).
 
@@ -23,7 +23,7 @@ For a source build, install Docker and GNU Make; on Windows use WSL2 with Docker
 On the host:
 
 ```sh
-git clone --branch 0.6.60 https://github.com/Achbite/Achbit.git Achbit
+git clone https://github.com/Achbite/Achbit.git Achbit
 cd Achbit
 # macOS only, once before packaging:
 bash scripts/setup-macos-signing.sh

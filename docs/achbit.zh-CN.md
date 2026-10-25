@@ -2,19 +2,19 @@
 
 # 在 Achbit 中使用 DeepSeek
 
-[Achbit](https://github.com/Achbite/Achbit) 是采用 MIT 许可证的本地优先编程 Agent，提供桌面 GUI、TUI 和 CLI。本指南使用 **Achbit 0.6.60**，通过 **Responses API** 接入 **DeepSeek Flash**。
+[Achbit](https://github.com/Achbite/Achbit) 是采用 MIT 许可证的本地优先编程 Agent，提供桌面 GUI、TUI 和 CLI。本指南通过 **Responses API** 接入 **DeepSeek Flash**。
 
 Achbit 在同一个会话中连接项目编辑、命令执行、浏览器交互和可视结果检查。GUI、TUI、CLI 共享模型连接与 Session 状态。Computer Use 提供内置浏览器、可选的 Chrome DevTools MCP 接入，以及经授权的 macOS 和 Windows 原生桌面操作。
 
 ## 1. 安装并打开 Achbit
 
-从 [Achbit 0.6.60](https://github.com/Achbite/Achbit/releases/tag/0.6.60) 下载对应平台的制品。
+从 [Releases](https://github.com/Achbite/Achbit/releases) 下载对应平台的制品。
 
 | 平台 | 安装包或解压包 | GUI 入口 |
 | --- | --- | --- |
-| macOS Apple Silicon | `Achbit-0.6.60-macos-arm64.pkg` 或 `Achbit-0.6.60-macos-arm64.tar.gz` | `/Applications/Achbit.app`，或解压目录中的 `Achbit.app` |
-| Windows x64 | `Achbit-0.6.60-win64-setup.exe` 或 `Achbit-0.6.60-win64.zip` | 开始菜单，或解压目录中的 `Achbit.exe` |
-| Linux ARM64 | `Achbit-0.6.60-linux-arm64.tar.gz` | 解压目录中的 `./Achbit` |
+| macOS Apple Silicon | `Achbit-<version>-macos-arm64.pkg` 或 `Achbit-<version>-macos-arm64.tar.gz` | `/Applications/Achbit.app`，或解压目录中的 `Achbit.app` |
+| Windows x64 | `Achbit-<version>-win64-setup.exe` 或 `Achbit-<version>-win64.zip` | 开始菜单，或解压目录中的 `Achbit.exe` |
+| Linux ARM64 | `Achbit-<version>-linux-arm64.tar.gz` | 解压目录中的 `./Achbit` |
 
 制品包含运行时。Windows 解压版 GUI 需要 WebView2；Linux GUI 需要 GTK、WebKitGTK 和 ALSA。macOS 制品使用项目本地开发签名，未经过 Apple 公证。详见[安装与用户目录](https://github.com/Achbite/Achbit/blob/0.6.60/docs/distribution.md)。
 
@@ -23,7 +23,7 @@ Achbit 在同一个会话中连接项目编辑、命令执行、浏览器交互�
 在宿主机执行：
 
 ```sh
-git clone --branch 0.6.60 https://github.com/Achbite/Achbit.git Achbit
+git clone https://github.com/Achbite/Achbit.git Achbit
 cd Achbit
 # 仅 macOS：首次打包前执行一次
 bash scripts/setup-macos-signing.sh
